@@ -1,0 +1,35 @@
+name: React CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Use Ubuntu for job execution
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v3 # Fetch code from GitHub
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # Use Node.js v18 (or whichever version you prefer)
+
+      - name: 📦 Install dependencies
+        run: npm install # Install your project's dependencies
+
+      - name: ✅ Run tests
+        run: npm test -- --watchAll=false # Run tests once, non-interactive
+
+      - name: 🛠️ Build project
+        run: npm run build # Run the updated build command (Vite + TypeScript)
+
+      - name: 📤 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # Vite's build output is typically in the ./dist folder
